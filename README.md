@@ -25,11 +25,11 @@
 | [Railway](#2-railway) | ✅ | ❌ 差 | ⚠️ 试用后 $1/月 | ✅ | ✅ 可挂 Postgres 等 | ❌ 无原生 KV | ❌ Free 长期无 Cron | **不建议作为免费严选** |
 | [Cloudflare](#3-cloudflare-workers--pages) | ✅ | ❌ `workers.dev` 常不可用；自定义域名也常慢/不稳 | ✅ | ✅ 极好 | ✅ D1 | ✅ | ✅ Cron Triggers | **功能最强，国内访问硬伤** |
 | [void.cloud](#4-voidcloud) | ✅ | ❌ 跑在 Cloudflare 上，同 CF | ✅ 有 free 档 | ✅ | ✅ D1 / PG | ✅ | ✅ | **能力对齐严选，但国内访问与产品归属有风险** |
-| [EdgeOne Makers](#补充-edgeone-makers腾讯云强烈建议纳入)（补充） | ✅ | ✅ 国内优势明显 | ✅ 永久免费档 | ✅ 中英文 | ⚠️ 无原生 SQL（接 Supabase 等） | ✅ | ❌ 未见原生 Cron | **国内访问首选；Cron/DB 需外接** |
+| [EdgeOne](#补充-edgeone腾讯云建议纳入makers--加速套餐要分开看)（补充） | ✅ | ✅ 国内优势明显 | ⚠️ **两层计费**：Makers 部署有免费档；国内站 EO 加速套餐从个人版起付费 | ✅ 中英文 | ⚠️ 无原生 SQL（接 Supabase 等） | ✅（Makers） | ❌ 未见原生 Cron | **国内访问首选；别把 EO 套餐当成「全免费」** |
 
 **实操建议（按场景）：**
 
-1. **要国内稳定打开 + 免费起步** → 优先 **EdgeOne Makers**；需要 Cron / 关系型 DB 时外接（如自建定时、Supabase）。
+1. **要国内稳定打开 + 尽量免费起步** → 优先 **EdgeOne Makers 免费档** 先用平台域名验证；正式绑备案域名并开大陆加速时，通常还要买 **EO 预付费套餐**（个人版起）。Cron / SQL 需外接。
 2. **要同平台自带 KV + Cron、可接受海外边缘** → 优先 **Deno Deploy**。
 3. **要最完整的免费边缘全家桶（D1/KV/Cron）且主要服务海外用户** → **Cloudflare**；国内用户务必绑自定义域名并实测。
 4. **Railway / 纯 void.cloud** → 暂不作为「国内免费严选」主推。
@@ -121,29 +121,68 @@
 
 ---
 
-## 补充：EdgeOne Makers（腾讯云，强烈建议纳入）
+## 补充：EdgeOne（腾讯云，建议纳入；Makers 与加速套餐要分开看）
 
-原 README 未列出，但按严选标准 **国内访问维度明显优于上述四家**。
+原 README 未列出。按严选标准，**国内访问维度明显优于上述四家**，但计费容易混淆：EdgeOne 家族至少要拆成两层。
 
-- 产品站：https://pages.edgeone.ai/（Pages 已升级为 **Makers**）  
-- 定价：https://pages.edgeone.ai/pricing  
+### 层 A：EdgeOne Makers（原 Pages）——应用部署平台
+
+- 产品站：https://pages.edgeone.ai/  
+- Makers 定价：https://pages.edgeone.ai/pricing · https://pages.edgeone.ai/zh/pricing  
 - 配额：https://pages.edgeone.ai/document/limits-and-quotas  
 - KV：https://pages.edgeone.ai/document/kv-storage
 
 | 项 | 结论 |
 | --- | --- |
-| 域名 | 平台默认域名 + 自定义域名（免费 SSL）；免费档自定义域名额度很高（文档写 200） |
-| 国内访问 | 腾讯边缘网络，大陆访问优势强；社区普遍反馈优于 Vercel/CF。**若加速区域含中国大陆，自定义域名需先 ICP 备案**；用平台默认域名可快速免备案试用（以控制台当前策略为准） |
-| 免费 | 明确 **永久免费档 $0**；当前为商业化前「限时宽松」阶段，配额可能调整 |
-| 文档 | 中英文文档 + CLI / MCP / 模板，对新手友好 |
-| DB | ❌ 无自研托管 SQL；文档引导 **Supabase 等外部库** |
+| 域名 | 平台默认域名 + 自定义域名（免费 SSL） |
+| 国内访问 | 腾讯边缘网络，大陆访问优势强；社区反馈普遍优于 Vercel/CF |
+| 免费 | Makers 明确宣传 **永久免费档 $0**（Git 部署、函数、Blob/KV 等）；当前为商业化前「限时宽松」，配额可能收紧 |
+| 文档 | 中英文 + CLI / MCP / 模板，新手友好 |
+| DB | ❌ 无自研托管 SQL；接 Supabase 等 |
 | KV | ✅ 边缘 KV（免费约 1GB） |
-| Cron | ❌ 文档目录中未见原生 Cron / 定时触发器 |
+| Cron | ❌ 未见原生 Cron |
 
-免费档量级（官网 Limits，可能变更）：项目 40、构建 500/月、边缘函数约 300 万次/月、云函数约 100 万次/月、KV/Blob 各约 1GB。
+Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 500/月、边缘函数约 300 万次/月、云函数约 100 万次/月、KV/Blob 各约 1GB。
 
-**适合：** 国内用户为主的站点/全栈 Web、需要免费 CDN+函数+KV。  
-**缺口补法：** Cron → 外部定时器调 API；SQL → Supabase / 自建库。
+### 层 B：EdgeOne 边缘安全加速（EO）——域名 CDN / 防护套餐（国内站）
+
+这是中国站「套餐选型」里的预付费产品，**不是 Makers 免费档本身**。给自有域名做安全加速时，通常按这套买：
+
+来源：[EdgeOne 产品定价](https://cloud.tencent.com/product/teo/pricing) / 套餐选型对比（价格以控制台为准，活动价会变）。
+
+| 套餐类型 | 价格 | 计费方式 | 计费周期 | 套餐内含流量 | 套餐内含请求数 |
+| --- | --- | --- | --- | --- | --- |
+| 个人版 | **29.9 元/套/月**（页面或有折扣价，如 9.9） | 预付费 | 月 | 50 GB | 300 万次 |
+| 基础版 | **399 元/套/月** | 预付费 | 月 | 500 GB | 2000 万次 |
+| 标准版 | **3,800 元/套/月** | 预付费 | 月 | 3 TB | 5000 万次 |
+| 企业版 | 定制报价 | 可定制 | 月 | 可定制 | 可定制 |
+
+能力概览（定价页摘要）：
+
+- **个人版**：绑 1 站；CDN / 智能加速、免费 HTTPS、平台级 DDoS、基础 CC、Web 基础访问管控等。
+- **基础版**：在个人版上增加精准匹配、精准 CC、OWASP 托管规则等。
+- **标准版**：再加 Bot 管理、智能 CC、AI 引擎防护等。
+- **企业版**：中国大陆网络优化、四层加速、独立 DDoS、策略模板等可定制能力。
+
+**套餐内含流量的大区抵扣比例**（实际消耗 1 GB 时，抵扣套餐额度如下；加量包同逻辑）：
+
+| 中国大陆 CN | 北美 NA | 欧洲 EU | 亚太1 AP1 | 亚太2 AP2 | 亚太3 AP3 | 中东 ME | 非洲 AA | 南美 SA |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 GB | 1.71 GB | 1.71 GB | 2.49 GB | 2.68 GB | 2.78 GB | 2.91 GB | 2.91 GB | 2.91 GB |
+
+含义：同样跑 1 GB，**中国大陆按 1:1 扣额度最「划算」**；海外大区会按更高比例扣套餐流量。超套餐可用流量包 / 请求包等加量包抵扣。
+
+国际站 `edgeone.ai/pricing` 另有 Free Plan / Personal（约 $1.4 起）等标价，与中国站人民币套餐体系不完全同一页面，选型时按账号所在站点核对。
+
+### 和严选标准怎么对齐？
+
+| 问题 | 答案 |
+| --- | --- |
+| 能不能「$0 部署一个能打开的项目」？ | **能**，走 **Makers 免费档 + 平台域名**。 |
+| 能不能「$0 + 自有备案域名 + 稳定大陆加速」？ | **通常不能默认成立**；自有域名开大陆加速一般要买 **EO 预付费套餐**（个人版起约 29.9 元/月）并完成 ICP 等合规要求。 |
+| 是否还值得纳入严选？ | **值得**——国内可达性仍是原清单里最强的；但 README 必须写清「Makers 免费 ≠ EO 套餐免费」。 |
+
+**缺口补法：** Cron → 外部定时调 API；SQL → Supabase / 自建库。
 
 ---
 
@@ -159,14 +198,13 @@
 
 ## 怎么用？（最小路径）
 
-### A. 国内优先：EdgeOne Makers
+### A. 国内优先：EdgeOne（先 Makers，再按需买 EO 套餐）
 
-1. 打开 https://pages.edgeone.ai/ 注册（国际站/控制台按提示）。
-2. 用 Git 导入或模板一键部署（Next.js / Vite 等）。
-3. 需要持久化小数据 → 控制台开通 **KV** 并绑定到项目。
-4. 需要 SQL → 接 Supabase（或自有数据库）。
-5. 需要定时任务 → 用外部 Cron（GitHub Actions / 云监控 / 第三方）HTTP 调用你的函数。
-6. 正式对外：准备已备案域名（若开大陆加速）→ 控制台添加自定义域名。
+1. 打开 https://pages.edgeone.ai/ 注册，用 Git / 模板部署（Next.js、Vite 等）。
+2. 先用 **平台默认域名** 验证；需要 KV → 控制台开通并绑定。
+3. SQL → Supabase（或自有库）；定时任务 → 外部 Cron HTTP 回调。
+4. 要正式域名 + 大陆加速：域名先 **ICP 备案** → 在中国站购买 **EO 预付费套餐**（个人版起）→ 按控制台添加域名 / CNAME。
+5. 有海外流量时留意套餐流量的 **大区抵扣比例**（海外 1 GB 可能扣掉 1.7～2.9 GB 额度）。
 
 ### B. KV + Cron 一体：Deno Deploy
 
@@ -190,7 +228,7 @@
 | --- | --- |
 | README 原先是否「准备好」可直接指引部署？ | **否**，仅有候选名单，缺对比与用法 |
 | 原四家是否都达标？ | **否**。Railway 基本出局；CF / void 卡在国内访问；Deno 卡在 SQL 与延迟 |
-| 还缺什么？ | 建议把 **EdgeOne Makers** 纳入严选；补「Cron/SQL 外接配方」；上线前对目标运营商做可达性实测 |
+| 还缺什么？ | 建议纳入 **EdgeOne**，但写清 **Makers 免费档 vs EO 预付费套餐**；补 Cron/SQL 外接；上线前做多运营商可达性实测 |
 
 ---
 
@@ -202,3 +240,5 @@
 - Void：https://void.cloud/guide/  
 - VoidZero 加入 Cloudflare：https://voidzero.dev/posts/voidzero-cloudflare  
 - EdgeOne Makers Pricing / Limits：https://pages.edgeone.ai/pricing · https://pages.edgeone.ai/document/limits-and-quotas  
+- EdgeOne 中国站套餐定价：https://cloud.tencent.com/product/teo/pricing  
+
