@@ -11,7 +11,7 @@
 | 国内可访问 | 默认域名或绑定自定义域名后，大陆网络可稳定打开（不依赖特殊 DNS/代理） |
 | 免费 & 新手友好 | 有可用的长期免费档；注册/部署门槛低 |
 | 文档 | 官方文档清晰，最好有中文或社区教程 |
-| 全栈能力 | 同一平台内尽量覆盖：**DB**、**KV**、**Cron** |
+| 全栈能力 | 尽量覆盖：**DB**、**KV**、**Cron**（DB 可为平台自带，或外接有免费额度的托管库，如 Supabase / Deno KV） |
 
 ---
 
@@ -21,18 +21,30 @@
 
 | 平台 | 域名 | 国内访问 | 免费 | 文档 | DB | KV | Cron | 建议 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [Deno Deploy](#1-deno-deploy) | ✅ | ⚠️ 一般 | ✅ | ✅（有中文站） | ⚠️ 仅 KV，无托管 SQL | ✅ | ✅ | **可作首选之一**（KV 场景） |
-| [Railway](#2-railway) | ✅ | ❌ 差 | ⚠️ 试用后仍 $0/月，但仅 $1 额度且规格很紧 | ✅ | ✅ 可挂 Postgres 等 | ❌ 无原生 KV | ❌ Free 长期无 Cron | **不建议作为免费严选** |
-| [Cloudflare](#3-cloudflare-workers--pages) | ✅ | ❌ `workers.dev` 常不可用；自定义域名也常慢/不稳 | ✅ | ✅ 极好 | ✅ D1 | ✅ | ✅ Cron Triggers | **功能最强，国内访问硬伤** |
-| [void.cloud](#4-voidcloud) | ✅ | ❌ 跑在 Cloudflare 上，同 CF | ✅ 有 free 档 | ✅ | ✅ D1 / PG | ✅ | ✅ | **能力对齐严选，但国内访问与产品归属有风险** |
-| [EdgeOne](#补充-edgeone腾讯云建议纳入makers--加速套餐要分开看)（补充） | ✅ | ✅ 国内优势明显 | ⚠️ **两层计费**：Makers 部署有免费档；国内站 EO 加速套餐从个人版起付费 | ✅ 中英文 | ⚠️ 无原生 SQL（接 Supabase 等） | ✅（Makers） | ❌ 未见原生 Cron | **国内访问首选；别把 EO 套餐当成「全免费」** |
+| [Deno Deploy](#1-deno-deploy) | ✅ | ⚠️ 一般 | ✅ | ✅（有中文站） | ✅ 自带 KV；SQL 可外接 Supabase 等 | ✅ | ✅ | **可作首选之一** |
+| [Railway](#2-railway) | ✅ | ❌ 差 | ⚠️ 试用后仍 $0/月，但仅 $1 额度且规格很紧 | ✅ | ✅ 平台库或外接 Supabase | ❌ 无原生 KV（可外接） | ❌ Free 长期无 Cron | **不建议作为免费严选** |
+| [Cloudflare](#3-cloudflare-workers--pages) | ✅ | ❌ `workers.dev` 常不可用；自定义域名也常慢/不稳 | ✅ | ✅ 极好 | ✅ D1；也可外接 Supabase | ✅ | ✅ Cron Triggers | **功能最强，国内访问硬伤** |
+| [void.cloud](#4-voidcloud) | ✅ | ❌ 跑在 Cloudflare 上，同 CF | ✅ 有 free 档 | ✅ | ✅ D1 / PG；可外接 Supabase | ✅ | ✅ | **能力对齐严选，但国内访问与产品归属有风险** |
+| [EdgeOne](#补充-edgeone腾讯云建议纳入makers--加速套餐要分开看)（补充） | ✅ | ✅ 国内优势明显 | ⚠️ **两层计费**：Makers 部署有免费档；国内站 EO 加速套餐从个人版起付费 | ✅ 中英文 | ✅ 官方接 Supabase 等免费库 | ✅（Makers） | ❌ 未见原生 Cron | **国内访问首选；别把 EO 套餐当成「全免费」** |
 
 **实操建议（按场景）：**
 
-1. **要国内稳定打开 + 尽量免费起步** → 优先 **EdgeOne Makers 免费档** 先用平台域名验证；正式绑备案域名并开大陆加速时，通常还要买 **EO 预付费套餐**（个人版起）。Cron / SQL 需外接。
-2. **要同平台自带 KV + Cron、可接受海外边缘** → 优先 **Deno Deploy**。
+1. **要国内稳定打开 + 尽量免费起步** → 优先 **EdgeOne Makers 免费档** + 外接 **Supabase Free**（或 Deno KV 等）；正式绑备案域名并开大陆加速时，通常还要买 **EO 预付费套餐**（个人版起）。Cron 需外接。
+2. **要同平台自带 KV + Cron、可接受海外边缘** → 优先 **Deno Deploy**（SQL 不够用再挂 Supabase）。
 3. **要最完整的免费边缘全家桶（D1/KV/Cron）且主要服务海外用户** → **Cloudflare**；国内用户务必绑自定义域名并实测。
 4. **Railway / 纯 void.cloud** → 暂不作为「国内免费严选」主推。
+
+### 外接 DB（通用补法，有免费额度）
+
+各计算平台都可以「应用在 A、库在 B」。缺原生 SQL 时，不必直接判负：
+
+| 外接库 | 大致免费能力（以官网为准，会变） | 适合挂在 |
+| --- | --- | --- |
+| **Supabase Free** | Postgres 约 500MB、2 个活跃项目、有非活跃暂停策略；另有 Auth/Storage 等 | EdgeOne / Deno / CF / Railway / void 均可 |
+| **Deno KV** | Deno Deploy Free 含 KV 额度（约 1GiB 级）；适合键值/轻量结构化数据 | 首选跑在 Deno Deploy；其他运行时需另寻兼容方案，一般不如直接用 Supabase |
+| 其他常见免费库 | Neon / Turso / Cloudflare D1 等也有免费档，可按栈选用 | 同上 |
+
+选型提示：要 **关系型 SQL + 国内开发者文档/模板多** → 优先 Supabase；要 **和 Deno 同账号一体** → 优先 Deno KV，复杂查询再混挂 Supabase。
 
 ---
 
@@ -50,7 +62,7 @@
 | 国内访问 | 默认可开的情况多于 CF 默认域，但节点主要在 **US / EU**，延迟与稳定性一般，需实测 |
 | 免费 | Free $0：约 100 万请求/月、20GB 出站、KV 1GiB 等；超额硬限制 |
 | 文档 | 官方文档完善；有中文站，新手友好 |
-| DB | **无托管 Postgres/MySQL**；内置 **Deno KV** |
+| DB | 自带 **Deno KV**；需要 Postgres 等 SQL 时外接 **Supabase Free**（或其他免费库）即可 |
 | KV | ✅ 免费档含 KV |
 | Cron | ✅ `Deno.cron()`，平台自动发现并调度 |
 
@@ -60,8 +72,8 @@
 - 新平台区域较少（文档提及 `us` / `eu`），对国内延迟不友好。
 - Queues（`Deno.Kv.enqueue`）在新 Deploy 上不可用。
 
-**适合：** 轻量 API、计数器/会话、带定时任务的小项目。  
-**不适合：** 强依赖 SQL、强依赖国内低延迟。
+**适合：** 轻量 API、计数器/会话、带定时任务的小项目；SQL 场景用 Supabase 外挂。  
+**不适合：** 强依赖国内低延迟、或要求数据库与边缘同机房强一致。
 
 ### 2. Railway
 
@@ -147,7 +159,7 @@
 | 国内访问 | 腾讯边缘网络，大陆访问优势强；社区反馈普遍优于 Vercel/CF |
 | 免费 | Makers 明确宣传 **永久免费档 $0**（Git 部署、函数、Blob/KV 等）；当前为商业化前「限时宽松」，配额可能收紧 |
 | 文档 | 中英文 + CLI / MCP / 模板，新手友好 |
-| DB | ❌ 无自研托管 SQL；接 Supabase 等 |
+| DB | 平台无自研托管 SQL；**官方文档接 Supabase**，也可用其他免费 Postgres；轻量数据可用本平台 KV |
 | KV | ✅ 边缘 KV（免费约 1GB） |
 | Cron | ❌ 未见原生 Cron |
 
@@ -191,7 +203,7 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 | 能不能「$0 + 自有备案域名 + 稳定大陆加速」？ | **通常不能默认成立**；自有域名开大陆加速一般要买 **EO 预付费套餐**（个人版起约 29.9 元/月）并完成 ICP 等合规要求。 |
 | 是否还值得纳入严选？ | **值得**——国内可达性仍是原清单里最强的；但 README 必须写清「Makers 免费 ≠ EO 套餐免费」。 |
 
-**缺口补法：** Cron → 外部定时调 API；SQL → Supabase / 自建库。
+**缺口补法：** Cron → 外部定时调 API；SQL → **Supabase Free**（或 Deno KV / Neon 等有免费额度的库）。
 
 ---
 
@@ -211,21 +223,20 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 
 1. 打开 https://pages.edgeone.ai/ 注册，用 Git / 模板部署（Next.js、Vite 等）。
 2. 先用 **平台默认域名** 验证；需要 KV → 控制台开通并绑定。
-3. SQL → Supabase（或自有库）；定时任务 → 外部 Cron HTTP 回调。
+3. SQL → **Supabase Free**（EdgeOne 文档有集成指南）；轻量也可用 Makers KV。定时任务 → 外部 Cron HTTP 回调。
 4. 要正式域名 + 大陆加速：域名先 **ICP 备案** → 在中国站购买 **EO 预付费套餐**（个人版起）→ 按控制台添加域名 / CNAME。
 5. 有海外流量时留意套餐流量的 **大区抵扣比例**（海外 1 GB 可能扣掉 1.7～2.9 GB 额度）。
 
 ### B. KV + Cron 一体：Deno Deploy
 
 1. 安装 Deno，按 https://docs.deno.com/deploy/ 创建组织/应用。
-2. 用 Deno KV 存数据；用 `Deno.cron()` 写定时任务。
+2. 数据：轻量用 **Deno KV**；需要 SQL 用 **Supabase Free**（或其他免费库）。定时任务用 `Deno.cron()`。
 3. 部署后用 `*.deno.dev` 先测；国内用户建议再绑自定义域名并做多运营商测速。
-4. 需要 SQL 时外接 Neon/Supabase/自建库。
 
 ### C. 海外用户 / 功能最全：Cloudflare
 
 1. 注册 Cloudflare，用 Wrangler 部署 Worker / 全栈框架。
-2. 绑定 **D1 + KV + Cron Triggers**。
+2. 绑定 **D1 + KV + Cron Triggers**；也可再外挂 **Supabase**（例如要用 Postgres 生态时）。
 3. **不要依赖 `workers.dev` 给国内用户**；必须自定义域名并实测。
 4. 国内不可达时，改走 EdgeOne，或 CF 仅作海外入口。
 
@@ -236,8 +247,8 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 | 问题 | 答案 |
 | --- | --- |
 | README 原先是否「准备好」可直接指引部署？ | **否**，仅有候选名单，缺对比与用法 |
-| 原四家是否都达标？ | **否**。Railway 基本出局；CF / void 卡在国内访问；Deno 卡在 SQL 与延迟 |
-| 还缺什么？ | 建议纳入 **EdgeOne**，但写清 **Makers 免费档 vs EO 预付费套餐**；补 Cron/SQL 外接；上线前做多运营商可达性实测 |
+| 原四家是否都达标？ | **否**。Railway 基本出局；CF / void 卡在国内访问；Deno 延迟一般（DB 可用 KV 或外接 Supabase 补齐） |
+| 还缺什么？ | 建议纳入 **EdgeOne**，写清 **Makers 免费 vs EO 套餐**；DB 统一按「自带或外接 Supabase/Deno KV」评估；Cron 缺口仍需外接；上线前做可达性实测 |
 
 ---
 
@@ -250,4 +261,5 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 - VoidZero 加入 Cloudflare：https://voidzero.dev/posts/voidzero-cloudflare  
 - EdgeOne Makers Pricing / Limits：https://pages.edgeone.ai/pricing · https://pages.edgeone.ai/document/limits-and-quotas  
 - EdgeOne 中国站套餐定价：https://cloud.tencent.com/product/teo/pricing  
+- Supabase Pricing（外接 DB 参考）：https://supabase.com/pricing  
 
