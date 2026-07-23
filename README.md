@@ -243,6 +243,16 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 
 ---
 
+## 相关：出海技术栈组合
+
+本仓库侧重 **国内可访问 + 免费起步** 的部署平台严选。若目标是 **出海**（部署/支付/认证面向国际用户），可配合：
+
+- **[出海技术组合](https://stack-on-sea.vercel.app/)**：面向国人开发者的出海技术栈生成器，覆盖部署、基础设施、认证、支付、监控等分层选型，可一键生成给 Cursor / Claude 等用的项目 Prompt，并做部署兼容检查。
+
+两者用法可以互补：国内用户为主 → 按上文严选；产品要出海 → 用 stack-on-sea 拼完整链路，再回来对照本文检查「国内是否还要打开」。
+
+---
+
 ## 准备度结论
 
 | 问题 | 答案 |
@@ -264,4 +274,5 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 - EdgeOne 中国站套餐定价：https://cloud.tencent.com/product/teo/pricing  
 - Supabase Pricing（外接 DB 参考）：https://supabase.com/pricing  
 - Upstash Pricing（外接 KV/Redis 参考）：https://upstash.com/pricing  
+- 出海技术组合（相关工具）：https://stack-on-sea.vercel.app/  
 
