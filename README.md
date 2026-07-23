@@ -11,7 +11,7 @@
 | 国内可访问 | 默认域名或绑定自定义域名后，大陆网络可稳定打开（不依赖特殊 DNS/代理） |
 | 免费 & 新手友好 | 有可用的长期免费档；注册/部署门槛低 |
 | 文档 | 官方文档清晰，最好有中文或社区教程 |
-| 全栈能力 | 尽量覆盖：**DB**、**KV**、**Cron**（DB 可为平台自带，或外接有免费额度的托管库，如 Supabase / Deno KV） |
+| 全栈能力 | 尽量覆盖：**DB**、**KV**、**Cron**（可为平台自带，或外接有免费额度的托管服务，如 Supabase / Deno KV / **Upstash**） |
 
 ---
 
@@ -22,29 +22,30 @@
 | 平台 | 域名 | 国内访问 | 免费 | 文档 | DB | KV | Cron | 建议 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | [Deno Deploy](#1-deno-deploy) | ✅ | ⚠️ 一般 | ✅ | ✅（有中文站） | ✅ 自带 KV；SQL 可外接 Supabase 等 | ✅ | ✅ | **可作首选之一** |
-| [Railway](#2-railway) | ✅ | ❌ 差 | ⚠️ 试用后仍 $0/月，但仅 $1 额度且规格很紧 | ✅ | ✅ 平台库或外接 Supabase | ❌ 无原生 KV（可外接） | ❌ Free 长期无 Cron | **不建议作为免费严选** |
+| [Railway](#2-railway) | ✅ | ❌ 差 | ⚠️ 试用后仍 $0/月，但仅 $1 额度且规格很紧 | ✅ | ✅ 平台库或外接 Supabase | ⚠️ 无原生 KV，可外接 Upstash | ❌ Free 长期无 Cron | **不建议作为免费严选** |
 | [Cloudflare](#3-cloudflare-workers--pages) | ✅ | ❌ `workers.dev` 常不可用；自定义域名也常慢/不稳 | ✅ | ✅ 极好 | ✅ D1；也可外接 Supabase | ✅ | ✅ Cron Triggers | **功能最强，国内访问硬伤** |
 | [void.cloud](#4-voidcloud) | ✅ | ❌ 跑在 Cloudflare 上，同 CF | ✅ 有 free 档 | ✅ | ✅ D1 / PG；可外接 Supabase | ✅ | ✅ | **能力对齐严选，但国内访问与产品归属有风险** |
 | [EdgeOne](#补充-edgeone腾讯云建议纳入makers--加速套餐要分开看)（补充） | ✅ | ✅ 国内优势明显 | ⚠️ **两层计费**：Makers 部署有免费档；国内站 EO 加速套餐从个人版起付费 | ✅ 中英文 | ✅ 官方接 Supabase 等免费库 | ✅（Makers） | ❌ 未见原生 Cron | **国内访问首选；别把 EO 套餐当成「全免费」** |
 
 **实操建议（按场景）：**
 
-1. **要国内稳定打开 + 尽量免费起步** → 优先 **EdgeOne Makers 免费档** + 外接 **Supabase Free**（或 Deno KV 等）；正式绑备案域名并开大陆加速时，通常还要买 **EO 预付费套餐**（个人版起）。Cron 需外接。
-2. **要同平台自带 KV + Cron、可接受海外边缘** → 优先 **Deno Deploy**（SQL 不够用再挂 Supabase）。
+1. **要国内稳定打开 + 尽量免费起步** → 优先 **EdgeOne Makers 免费档** + 外接 **Supabase**（DB）/ **Upstash**（KV，若不用平台 KV）；正式绑备案域名并开大陆加速时，通常还要买 **EO 预付费套餐**（个人版起）。Cron 需外接。
+2. **要同平台自带 KV + Cron、可接受海外边缘** → 优先 **Deno Deploy**（SQL 不够用再挂 Supabase；也可用 Upstash）。
 3. **要最完整的免费边缘全家桶（D1/KV/Cron）且主要服务海外用户** → **Cloudflare**；国内用户务必绑自定义域名并实测。
 4. **Railway / 纯 void.cloud** → 暂不作为「国内免费严选」主推。
 
-### 外接 DB（通用补法，有免费额度）
+### 外接 DB / KV（通用补法，有免费额度）
 
-各计算平台都可以「应用在 A、库在 B」。缺原生 SQL 时，不必直接判负：
+各计算平台都可以「应用在 A、存储在 B」。缺原生 DB/KV 时，不必直接判负：
 
-| 外接库 | 大致免费能力（以官网为准，会变） | 适合挂在 |
-| --- | --- | --- |
-| **Supabase Free** | Postgres 约 500MB、2 个活跃项目、有非活跃暂停策略；另有 Auth/Storage 等 | EdgeOne / Deno / CF / Railway / void 均可 |
-| **Deno KV** | Deno Deploy Free 含 KV 额度（约 1GiB 级）；适合键值/轻量结构化数据 | 首选跑在 Deno Deploy；其他运行时需另寻兼容方案，一般不如直接用 Supabase |
-| 其他常见免费库 | Neon / Turso / Cloudflare D1 等也有免费档，可按栈选用 | 同上 |
+| 外接服务 | 大致免费能力（以官网为准，会变） | 用途 | 适合挂在 |
+| --- | --- | --- | --- |
+| **Supabase Free** | Postgres 约 500MB、2 个活跃项目、有非活跃暂停策略；另有 Auth/Storage 等 | 关系型 **DB** | EdgeOne / Deno / CF / Railway / void 均可 |
+| **Deno KV** | Deno Deploy Free 含 KV 额度（约 1GiB 级） | **KV** / 轻量结构化数据 | 首选跑在 Deno Deploy |
+| **Upstash Redis Free** | 约 256MB 数据、10GB 带宽、50 万 commands/月 | **KV**（Redis 协议，边缘友好） | 各平台均可；无原生 KV 时优先补它 |
+| 其他 | Neon / Turso / Cloudflare D1 等也有免费档 | DB / 文档库等 | 按栈选用 |
 
-选型提示：要 **关系型 SQL + 国内开发者文档/模板多** → 优先 Supabase；要 **和 Deno 同账号一体** → 优先 Deno KV，复杂查询再混挂 Supabase。
+选型提示：要 **SQL** → Supabase；要 **KV** → 平台自带 KV，否则 **Upstash**；Deno 一体栈可优先 Deno KV，不够再混挂 Upstash/Supabase。
 
 ---
 
@@ -96,7 +97,7 @@
 | 免费 | 有长期 Free $0，但 **$1/月额度 + 低规格** 只够极轻量玩具；正式小项目很容易不够 |
 | 文档 | 英文文档清晰，生态模板多 |
 | DB | ✅ 可一键部署 Postgres/MySQL/Redis 等（同样吃额度与 Volume） |
-| KV | ❌ 无平台级 KV 产品（可用 Redis 服务替代，但占额度） |
+| KV | ❌ 无平台级 KV；可外接 **Upstash Redis Free**（或自建 Redis，占额度） |
 | Cron | 定价表写明：**Cron 仅 Free Trial**；试用结束后的 Free 长期档不带 Cron（需 Hobby+） |
 
 **结论：仍不满足「够用的免费 + Cron + 国内可访问」组合，移出严选主推。**
@@ -203,7 +204,7 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 | 能不能「$0 + 自有备案域名 + 稳定大陆加速」？ | **通常不能默认成立**；自有域名开大陆加速一般要买 **EO 预付费套餐**（个人版起约 29.9 元/月）并完成 ICP 等合规要求。 |
 | 是否还值得纳入严选？ | **值得**——国内可达性仍是原清单里最强的；但 README 必须写清「Makers 免费 ≠ EO 套餐免费」。 |
 
-**缺口补法：** Cron → 外部定时调 API；SQL → **Supabase Free**（或 Deno KV / Neon 等有免费额度的库）。
+**缺口补法：** Cron → 外部定时调 API；SQL → **Supabase Free**；KV → 平台 KV 或 **Upstash**。
 
 ---
 
@@ -223,14 +224,14 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 
 1. 打开 https://pages.edgeone.ai/ 注册，用 Git / 模板部署（Next.js、Vite 等）。
 2. 先用 **平台默认域名** 验证；需要 KV → 控制台开通并绑定。
-3. SQL → **Supabase Free**（EdgeOne 文档有集成指南）；轻量也可用 Makers KV。定时任务 → 外部 Cron HTTP 回调。
+3. SQL → **Supabase Free**；KV → Makers KV 或 **Upstash**。定时任务 → 外部 Cron HTTP 回调。
 4. 要正式域名 + 大陆加速：域名先 **ICP 备案** → 在中国站购买 **EO 预付费套餐**（个人版起）→ 按控制台添加域名 / CNAME。
 5. 有海外流量时留意套餐流量的 **大区抵扣比例**（海外 1 GB 可能扣掉 1.7～2.9 GB 额度）。
 
 ### B. KV + Cron 一体：Deno Deploy
 
 1. 安装 Deno，按 https://docs.deno.com/deploy/ 创建组织/应用。
-2. 数据：轻量用 **Deno KV**；需要 SQL 用 **Supabase Free**（或其他免费库）。定时任务用 `Deno.cron()`。
+2. 数据：轻量用 **Deno KV**（或 **Upstash**）；需要 SQL 用 **Supabase Free**。定时任务用 `Deno.cron()`。
 3. 部署后用 `*.deno.dev` 先测；国内用户建议再绑自定义域名并做多运营商测速。
 
 ### C. 海外用户 / 功能最全：Cloudflare
@@ -248,7 +249,7 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 | --- | --- |
 | README 原先是否「准备好」可直接指引部署？ | **否**，仅有候选名单，缺对比与用法 |
 | 原四家是否都达标？ | **否**。Railway 基本出局；CF / void 卡在国内访问；Deno 延迟一般（DB 可用 KV 或外接 Supabase 补齐） |
-| 还缺什么？ | 建议纳入 **EdgeOne**，写清 **Makers 免费 vs EO 套餐**；DB 统一按「自带或外接 Supabase/Deno KV」评估；Cron 缺口仍需外接；上线前做可达性实测 |
+| 还缺什么？ | 建议纳入 **EdgeOne**，写清 **Makers 免费 vs EO 套餐**；DB/KV 统一按「自带或外接 Supabase / Deno KV / Upstash」评估；Cron 缺口仍需外接；上线前做可达性实测 |
 
 ---
 
@@ -262,4 +263,5 @@ Makers 免费档量级（Limits 文档，可能变更）：项目 40、构建 50
 - EdgeOne Makers Pricing / Limits：https://pages.edgeone.ai/pricing · https://pages.edgeone.ai/document/limits-and-quotas  
 - EdgeOne 中国站套餐定价：https://cloud.tencent.com/product/teo/pricing  
 - Supabase Pricing（外接 DB 参考）：https://supabase.com/pricing  
+- Upstash Pricing（外接 KV/Redis 参考）：https://upstash.com/pricing  
 
