@@ -22,7 +22,7 @@
 | 平台 | 域名 | 国内访问 | 免费 | 文档 | DB | KV | Cron | 建议 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | [Deno Deploy](#1-deno-deploy) | ✅ | ⚠️ 一般 | ✅ | ✅（有中文站） | ⚠️ 仅 KV，无托管 SQL | ✅ | ✅ | **可作首选之一**（KV 场景） |
-| [Railway](#2-railway) | ✅ | ❌ 差 | ⚠️ 试用后 $1/月 | ✅ | ✅ 可挂 Postgres 等 | ❌ 无原生 KV | ❌ Free 长期无 Cron | **不建议作为免费严选** |
+| [Railway](#2-railway) | ✅ | ❌ 差 | ⚠️ 试用后仍 $0/月，但仅 $1 额度且规格很紧 | ✅ | ✅ 可挂 Postgres 等 | ❌ 无原生 KV | ❌ Free 长期无 Cron | **不建议作为免费严选** |
 | [Cloudflare](#3-cloudflare-workers--pages) | ✅ | ❌ `workers.dev` 常不可用；自定义域名也常慢/不稳 | ✅ | ✅ 极好 | ✅ D1 | ✅ | ✅ Cron Triggers | **功能最强，国内访问硬伤** |
 | [void.cloud](#4-voidcloud) | ✅ | ❌ 跑在 Cloudflare 上，同 CF | ✅ 有 free 档 | ✅ | ✅ D1 / PG | ✅ | ✅ | **能力对齐严选，但国内访问与产品归属有风险** |
 | [EdgeOne](#补充-edgeone腾讯云建议纳入makers--加速套餐要分开看)（补充） | ✅ | ✅ 国内优势明显 | ⚠️ **两层计费**：Makers 部署有免费档；国内站 EO 加速套餐从个人版起付费 | ✅ 中英文 | ⚠️ 无原生 SQL（接 Supabase 等） | ✅（Makers） | ❌ 未见原生 Cron | **国内访问首选；别把 EO 套餐当成「全免费」** |
@@ -68,17 +68,26 @@
 - 定价：https://railway.com/pricing  
 - Cron 文档：https://docs.railway.com/reference/cron-jobs
 
+#### 当前免费策略（新账号）
+
+| 阶段 | 费用 | 额度 / 限制 |
+| --- | --- | --- |
+| 注册后试用 | $0 | **30 天试用** + **$5** 额度，可用于 CPU / 内存 / 存储 / 网络 |
+| 试用结束后 · Free | **$0/月** | 每月仅约 **$1 资源额度**；单服务上限约 **1 vCPU / 0.5GB RAM / 0.5GB Volume** |
+
+说明：官网文案常写成 “then $1 per month”，实际对应 Free 档的 **月度 $1 用量额度**（不是另开 Hobby 那种最低消费）；额度用完或触达规格上限后，服务会受限/停摆，需升级 Hobby（$5 起）等付费档。
+
 | 项 | 结论 |
 | --- | --- |
 | 域名 | 提供平台域名 + 自定义域名 |
 | 国内访问 | `*.railway.app` 及解析到其 IP 的域名，社区大量反馈 **大陆访问困难/不可达** |
-| 免费 | 30 天试用送 $5；之后 Free 为 **$1/月**（含极少额度），不是长期 $0 |
+| 免费 | 有长期 Free $0，但 **$1/月额度 + 低规格** 只够极轻量玩具；正式小项目很容易不够 |
 | 文档 | 英文文档清晰，生态模板多 |
-| DB | ✅ 可一键部署 Postgres/MySQL/Redis 等 |
+| DB | ✅ 可一键部署 Postgres/MySQL/Redis 等（同样吃额度与 Volume） |
 | KV | ❌ 无平台级 KV 产品（可用 Redis 服务替代，但占额度） |
-| Cron | 定价表写明：**Cron 仅 Free Trial**；正式 Free 长期档不带 Cron（需 Hobby+） |
+| Cron | 定价表写明：**Cron 仅 Free Trial**；试用结束后的 Free 长期档不带 Cron（需 Hobby+） |
 
-**结论：不满足「免费 + Cron + 国内可访问」组合，移出严选主推。**
+**结论：仍不满足「够用的免费 + Cron + 国内可访问」组合，移出严选主推。**
 
 ### 3. Cloudflare Workers / Pages
 
